@@ -138,15 +138,73 @@ export const verifyOtp = async (req: Request, res: Response) => {
     const token: string = generateAccessToken(
       user._id as mongoose.Types.ObjectId
     );
+    res.status(201).json(
+      ResponseApi.success(201, "Account verified successfully", {
+        accessToken: token,
+      })
+    );
+  } catch (error) {
     res
+      .status(500)
+      .json(ResponseApi.error(500, "Internal server error", error as string));
+  }
+};
+
+export const forgotPassword = async (req: Request, res: Response) => {
+  try {
+    const { email } = req.body;
+    const user: IUser | null = await User.findOne({ email });
+    if (!user) {
+      return res.status(404).json(ResponseApi.error(404, "User not found"));
+    }
+
+    const otp: string = generateOtp();
+    const otpExpiry: Date = new Date(Date.now() + 10 * 60 * 1000);
+    user.otp = otp;
+    user.otpExpiry = otpExpiry;
+    user.isVerified = false;
+    await user.save();
+
+    await transporter.sendMail({
+      from: process.env.EMAIL_USER,
+      to: email,
+      subject: "Verify your account - OTP",
+      text: `Your OTP is ${otp}. It is valid for 10 minutes.`,
+    });
+
+    return res
       .status(201)
       .json(
-        ResponseApi.success(201, "Account verified successfully", {
-          accessToken: token,
-        })
+        ResponseApi.success(
+          201,
+          "User registered successfully. Please verify your email."
+        )
       );
   } catch (error) {
     res
+      .status(500)
+      .json(ResponseApi.error(500, "Internal server error", error as string));
+  }
+};
+
+export const resetPassword = async (req: Request, res: Response) => {
+  try {
+    const { email, newPassword } = req.body;
+    const user: IUser | null = await User.findOne({ email });
+    if (!user) {
+      return res.status(404).json(ResponseApi.error(404, "User not found"));
+    }
+    const salt: string = await bcrypt.genSalt(10);
+    const hashedPassword: string = await bcrypt.hash(newPassword, salt);
+    user.password = hashedPassword;
+    user.otp = "";
+    user.otpExpiry = new Date();
+    await user.save();
+    return res
+      .status(200)
+      .json(ResponseApi.success(200, "Password reset successfully"));
+  } catch (error) {
+    return res
       .status(500)
       .json(ResponseApi.error(500, "Internal server error", error as string));
   }
