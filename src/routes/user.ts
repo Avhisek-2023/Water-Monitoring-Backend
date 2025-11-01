@@ -4,9 +4,9 @@ import {
   getAllUsers,
   getUserById,
   getUserProfile,
-} from "../controllers/users.ts";
-import { verifyToken } from "../middlewares/authMiddleware.ts";
-import { authorizeRoles } from "../middlewares/roleMiddleware.ts";
+} from "../controllers/users.js";
+import { verifyToken } from "../middlewares/authMiddleware.js";
+import { authorizeRoles } from "../middlewares/roleMiddleware.js";
 
 const router = express.Router();
 

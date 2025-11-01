@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from "express";
-import User from "../models/users.ts";
-import { ResponseApi } from "../GlobalResponse/Response.ts";
+import User from "../models/users.js";
+import { ResponseApi } from "../GlobalResponse/Response.js";
 import { log } from "console";
 
 export const authorizeRoles = (...allowedRoles: string[]) => {

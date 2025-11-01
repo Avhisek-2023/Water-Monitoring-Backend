@@ -1,9 +1,9 @@
 import { Request, Response } from "express";
-import { IUser } from "../interfaces/IUser.ts";
-import { ResponseApi } from "../GlobalResponse/Response.ts";
-import User from "../models/users.ts";
+import { IUser } from "../interfaces/IUser.js";
+import { ResponseApi } from "../GlobalResponse/Response.js";
+import User from "../models/users.js";
 import bcrypt from "bcryptjs";
-import { generateAccessToken } from "../utils/jwtService.ts";
+import { generateAccessToken } from "../utils/jwtService.js";
 import mongoose from "mongoose";
 
 export const createUser = async (req: Request, res: Response) => {

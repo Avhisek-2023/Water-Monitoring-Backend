@@ -4,17 +4,21 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "dev": "nodemon --legacy-watch --watch src --ext ts --exec node --loader ts-node/esm src/server/index.ts"
+    "dev": "nodemon --legacy-watch --watch src --ext ts --exec node --loader ts-node/esm src/server/index.ts",
+    "build": "tsc",
+    "start": "node dist/server/index.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@vercel/node": "^5.5.1",
     "bcryptjs": "^3.0.2",
     "cors": "^2.8.5",
     "dotenv": "^17.2.3",
     "express": "^5.1.0",
+    "google-auth-library": "^10.5.0",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.19.2"
   },
