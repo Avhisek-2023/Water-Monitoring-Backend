@@ -1,5 +1,5 @@
 import dotenv from "dotenv";
-import app from "./app.ts";
+import app from "./app.js";
 import mongoose from "mongoose";
 
 dotenv.config();
@@ -10,11 +10,9 @@ mongoose
   .connect(DB_URL)
   .then(() => {
     console.log("DB connected");
-
-    app.listen(PORT, () => {
-      console.log(`Server is running on port ${PORT}`);
-    });
   })
   .catch((error) => {
     console.error("Error connecting to MongoDB:", error);
   });
+
+export default app;

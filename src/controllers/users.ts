@@ -1,10 +1,11 @@
 import { Request, Response } from "express";
-import { IUser } from "../interfaces/IUser.ts";
-import { ResponseApi } from "../GlobalResponse/Response.ts";
-import User from "../models/users.ts";
+import { IUser } from "../interfaces/IUser.js";
+import { ResponseApi } from "../GlobalResponse/Response.js";
+import User from "../models/users.js";
 import bcrypt from "bcryptjs";
-import { generateAccessToken } from "../utils/jwtService.ts";
+import { generateAccessToken } from "../utils/jwtService.js";
 import mongoose from "mongoose";
+import UserProfile from "../models/userprofile.js";
 
 export const createUser = async (req: Request, res: Response) => {
   try {
@@ -78,15 +79,52 @@ export const getUserById = async (req: Request, res: Response) => {
 };
 
 export const getUserProfile = async (req: Request, res: Response) => {
-  console.log(req.user?.userID);
-  const user = await User.findById(req.user?.userID).select(
-    "-password -otp -otpExpiry -isVerified -__v"
-  );
-  if (!user) {
-    return res.status(404).json(ResponseApi.error(404, "User not found"));
+  const userProfile = await UserProfile.findOne({ user_id: req.user?.userID });
+  if (!userProfile) {
+    return res
+      .status(404)
+      .json(ResponseApi.error(404, "User profile not found"));
   }
-
   return res
     .status(200)
-    .json(ResponseApi.success(200, "User profile fetched successfully", user));
+    .json(
+      ResponseApi.success(200, "User profile fetched successfully", userProfile)
+    );
+};
+
+export const updateProfile = async (req: Request, res: Response) => {
+  try {
+    const { dob, profileUrl } = req.body;
+
+    const userProfile = await UserProfile.findOneAndUpdate(
+      { user_id: req.user?.userID },
+      {
+        $set: {
+          ...(dob && { dob }),
+          ...(profileUrl && { profileUrl }),
+        },
+      },
+      { new: true, upsert: false }
+    );
+
+    if (!userProfile) {
+      return res
+        .status(404)
+        .json(ResponseApi.error(404, "User profile not found"));
+    }
+
+    return res
+      .status(200)
+      .json(
+        ResponseApi.success(
+          200,
+          "User profile updated successfully",
+          userProfile
+        )
+      );
+  } catch (error) {
+    return res
+      .status(500)
+      .json(ResponseApi.error(500, "Error updating user profile"));
+  }
 };

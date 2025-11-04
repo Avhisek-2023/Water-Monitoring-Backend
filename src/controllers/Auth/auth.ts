@@ -1,14 +1,14 @@
 import { Request, Response } from "express";
-import User from "../models/users.ts";
+import User from "../../models/users.js";
 import bcrypt from "bcryptjs";
-import { generateAccessToken } from "../utils/jwtService.ts";
+import { generateAccessToken } from "../../utils/jwtService.js";
 import mongoose from "mongoose";
-import { IUser } from "../interfaces/IUser.ts";
-import { generateOtp } from "../utils/otpService.ts";
+import { IUser } from "../../interfaces/IUser.js";
+import { generateOtp } from "../../utils/otpService.js";
 import nodemailer from "nodemailer";
 import dotenv from "dotenv";
-import { ResponseApi } from "../GlobalResponse/Response.ts";
-import { error } from "console";
+import { ResponseApi } from "../../GlobalResponse/Response.js";
+import UserProfile from "../../models/userprofile.js";
 
 dotenv.config();
 
@@ -89,6 +89,12 @@ export const register = async (req: Request, res: Response) => {
     });
 
     await newUser.save();
+
+    await UserProfile.create({
+      user_id: newUser._id,
+      name: name,
+      email: email,
+    });
 
     await transporter.sendMail({
       from: process.env.EMAIL_USER,

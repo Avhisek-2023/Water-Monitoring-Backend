@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import jwt, { JwtPayload } from "jsonwebtoken";
-import User from "../models/users.ts";
-import { ResponseApi } from "../GlobalResponse/Response.ts";
+import User from "../models/users.js";
+import { ResponseApi } from "../GlobalResponse/Response.js";
 
 interface DecodedUser extends JwtPayload {
   userID: string;
