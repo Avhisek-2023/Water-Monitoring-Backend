@@ -8,6 +8,7 @@ import { generateOtp } from "../../utils/otpService.js";
 import nodemailer from "nodemailer";
 import dotenv from "dotenv";
 import { ResponseApi } from "../../GlobalResponse/Response.js";
+import UserProfile from "../../models/userprofile.js";
 
 dotenv.config();
 
@@ -88,6 +89,12 @@ export const register = async (req: Request, res: Response) => {
     });
 
     await newUser.save();
+
+    await UserProfile.create({
+      user_id: newUser._id,
+      name: name,
+      email: email,
+    });
 
     await transporter.sendMail({
       from: process.env.EMAIL_USER,
