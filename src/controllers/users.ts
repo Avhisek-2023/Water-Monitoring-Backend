@@ -41,6 +41,12 @@ export const createUser = async (req: Request, res: Response) => {
 
     await newUser.save();
 
+    await UserProfile.create({
+      user_id: newUser._id,
+      name: name,
+      email: email,
+    });
+
     const token: string = generateAccessToken(
       newUser._id as mongoose.Types.ObjectId
     );
