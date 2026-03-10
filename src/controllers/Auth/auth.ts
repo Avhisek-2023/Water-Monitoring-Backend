@@ -42,11 +42,14 @@ export const login = async (req: Request, res: Response) => {
         .json(ResponseApi.error(400, "Please verify your account"));
     }
     const token: string = generateAccessToken(
-      user._id as mongoose.Types.ObjectId
+      user._id as mongoose.Types.ObjectId,
     );
 
     res.json(
-      ResponseApi.success(200, "Login successful", { accessToken: token })
+      ResponseApi.success(200, "Login successful", {
+        user,
+        accessToken: token,
+      }),
     );
   } catch (error) {
     res
@@ -56,6 +59,8 @@ export const login = async (req: Request, res: Response) => {
 };
 export const register = async (req: Request, res: Response) => {
   try {
+    console.log(req.body);
+
     const { name, email, password }: IUser = req.body;
     if (password.length < 8) {
       return res
@@ -108,8 +113,8 @@ export const register = async (req: Request, res: Response) => {
       .json(
         ResponseApi.success(
           201,
-          "User registered successfully. Please verify your email."
-        )
+          "User registered successfully. Please verify your email.",
+        ),
       );
   } catch (error) {
     res
@@ -142,12 +147,13 @@ export const verifyOtp = async (req: Request, res: Response) => {
     user.otpExpiry = new Date();
     await user.save();
     const token: string = generateAccessToken(
-      user._id as mongoose.Types.ObjectId
+      user._id as mongoose.Types.ObjectId,
     );
     res.status(201).json(
       ResponseApi.success(201, "Account verified successfully", {
+        user,
         accessToken: token,
-      })
+      }),
     );
   } catch (error) {
     res
@@ -183,8 +189,8 @@ export const forgotPassword = async (req: Request, res: Response) => {
       .json(
         ResponseApi.success(
           201,
-          "User registered successfully. Please verify your email."
-        )
+          "User registered successfully. Please verify your email.",
+        ),
       );
   } catch (error) {
     res

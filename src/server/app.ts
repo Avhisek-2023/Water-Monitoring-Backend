@@ -3,6 +3,9 @@ import cors from "cors";
 import authRoutes from "../routes/Auth/auth.js";
 import userRoutes from "../routes/user.js";
 
+import contactRoutes from "../routes/contact.js";
+import addressRoutes from "../routes/address.js";
+
 const app = express();
 
 app.use(cors());
@@ -14,4 +17,6 @@ app.get("/api", (req, res) => {
 
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
+app.use("/api/contact", contactRoutes);
+app.use("/api/address", addressRoutes);
 export default app;
